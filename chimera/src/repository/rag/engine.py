@@ -17,7 +17,7 @@ from typing import Any
 from collections.abc import AsyncGenerator
 import loguru
 import httpx
-
+import json
 from src.repository.rag.base import BaseRAGRepository
 from src.repository.inference_eng import InferenceHelper
 from src.utilities.httpkit.httpx_kit import httpx_kit
@@ -38,14 +38,14 @@ class RAGChatModelRepository(BaseRAGRepository):
         """
         return f"### System: {current_context}\n" + f"\n### Human: {prmpt}\n### Assistant:"
 
-    async def inference(
+    def inference(
         self,
         input_msg: str,
         temperature: float = 0.2,
         top_k: int = 40,
         top_p: float = 0.9,
         n_predict: int = 128,
-    ) -> AsyncGenerator[Any, None]:
+    ) -> str:
         """
         **Inference using seperate service:(llamacpp)**
 
@@ -59,7 +59,7 @@ class RAGChatModelRepository(BaseRAGRepository):
         - **n_predict (int):** n_predict parameter for inference(int)
 
         **Returns:**
-        AsyncGenerator[Any, None]: response message
+        str: response message
         """
 
         data = {
@@ -74,19 +74,21 @@ class RAGChatModelRepository(BaseRAGRepository):
             "stop": ["\n### Human:"],
             "stream": True,
         }
-
         try:
-            async with httpx_kit.async_client.stream(
-                "POST",
-                InferenceHelper.instruct_infer_url(),
-                headers={"Content-Type": "application/json"},
-                json=data,
-                # We disable all timeout and trying to fix streaming randomly cutting off
-                timeout=httpx.Timeout(timeout=None),
-            ) as response:
-                response.raise_for_status()
-                async for chunk in response.aiter_text():
-                    yield chunk
+            with httpx.Client() as client:
+                response = client.post(
+                    InferenceHelper.instruct_infer_url(),
+                    headers={"Content-Type": "application/json"},
+                    json=data,
+                    timeout=httpx.Timeout(timeout=None),
+                )
+                lines = response.content.decode('utf-8').splitlines()
+                combined_content = ""
+                for line in lines:
+                    if line.startswith('data: '):
+                        json_data = json.loads(line[len('data: '):])
+                        combined_content += json_data['content']
+                return combined_content
         except httpx.ReadError as e:
             loguru.logger.error(f"An error occurred while requesting {e.request.url!r}.")
         except httpx.HTTPStatusError as e:

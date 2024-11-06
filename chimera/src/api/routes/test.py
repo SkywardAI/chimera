@@ -14,22 +14,31 @@
 # limitations under the License.
 
 import fastapi
-from src.models.schemas.health import HealthCheckResponse
 
+from src.api.dependencies.repository import get_rag_repository
+from src.models.schemas.health import HealthCheckResponse
+from src.repository.rag.engine import RAGChatModelRepository
 
 router = fastapi.APIRouter(prefix="/test", tags=["test"])
 
 
 @router.post("/chat", name="test:chat")
-async def health_check() -> HealthCheckResponse:
+async def test_chat(
+    msg: str,
+    rag_chat_repo: RAGChatModelRepository = fastapi.Depends(get_rag_repository(repo_type=RAGChatModelRepository)),
+    ) -> HealthCheckResponse:
     """
     Check the health of the service
 
     ```bash
-    curl http://localhost:8000/api/test -> {"status":"ok"}
+    curl http://localhost:8000/api/test/chat -> {"status":"ok"}
     ```
 
     Return:
     - **status**: The status of the service
     """
-    return HealthCheckResponse(status="ok")
+    result = rag_chat_repo.inference( input_msg=msg )
+    print('-------------------------------')
+    print(result)
+    print('-------------------------------')
+    return HealthCheckResponse(status=result)

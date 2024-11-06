@@ -15,7 +15,6 @@
 
 
 import pydantic
-import openai
 
 from src.config.manager import settings
 
@@ -24,8 +23,7 @@ class InferenceHelper:
     infer_eng_url: pydantic.StrictStr = settings.INFERENCE_ENG
     infer_eng_port: pydantic.PositiveInt = settings.INFERENCE_ENG_PORT
     instruction: pydantic.StrictStr = settings.INSTRUCTION
-    embedding_url: pydantic.StrictStr = settings.EMBEDDING_ENG
-    embedding_port: pydantic.PositiveInt = settings.EMBEDDING_ENG_PORT
+
 
     def init(self) -> None:
         raise NotImplementedError("InferenceHelper is a singleton class. Use inference_helper instead.")
