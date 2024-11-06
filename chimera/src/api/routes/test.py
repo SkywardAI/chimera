@@ -14,11 +14,22 @@
 # limitations under the License.
 
 import fastapi
-
-from src.api.routes.health import router as health_router
-from src.api.routes.test import router as test_router
-router = fastapi.APIRouter()
+from src.models.schemas.health import HealthCheckResponse
 
 
-router.include_router(router=health_router)
-router.include_router(router=test_router)
+router = fastapi.APIRouter(prefix="/test", tags=["test"])
+
+
+@router.post("/chat", name="test:chat")
+async def health_check() -> HealthCheckResponse:
+    """
+    Check the health of the service
+
+    ```bash
+    curl http://localhost:8000/api/test -> {"status":"ok"}
+    ```
+
+    Return:
+    - **status**: The status of the service
+    """
+    return HealthCheckResponse(status="ok")

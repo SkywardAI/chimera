@@ -142,21 +142,21 @@ demo-logs:
 
 .PHONY: ruff
 ruff:
-	@ruff check --output-format=github backend/src/ --config ruff.toml
+	@ruff check --output-format=github chimera/src/ --config ruff.toml
 
 ############################################################################################################
 # Download model from Hugging Face
 
 .PHONY: lm
 lm:
-	@echo skip_lm_part_for_now
-#	@mkdir -p volumes/models && [ -f volumes/models/$(LANGUAGE_MODEL_NAME) ] || wget -O volumes/models/$(LANGUAGE_MODEL_NAME) $(LANGUAGE_MODEL_URL)
-#	@mkdir -p volumes/models && [ -f volumes/models/$(EMBEDDING_MODEL_NAME) ] || wget -O volumes/models/$(EMBEDDING_MODEL_NAME) $(EMBEDDING_MODEL_URL)
+#	@echo skip_lm_part_for_now
+	@mkdir -p data/models && [ -f data/models/$(LANGUAGE_MODEL_NAME) ] || wget -O data/models/$(LANGUAGE_MODEL_NAME) $(LANGUAGE_MODEL_URL)
+#	@mkdir -p models && [ -f data/models/$(EMBEDDING_MODEL_NAME) ] || wget -O data/models/$(EMBEDDING_MODEL_NAME) $(EMBEDDING_MODEL_URL)
 
 
 .PHONY: localinfer
 localinfer: lm
-	@docker run -p 8080:8080 -v ./volumes/models:/models gclub/llama.cpp:$(INFERENCE_ENG_VERSION) -m models/$(LANGUAGE_MODEL_NAME) -c 512 -cnv -i --metrics --host 0.0.0.0 --port 8080
+	@docker run -p 8080:8080 -v ./data/models:/models gclub/llama.cpp:$(INFERENCE_ENG_VERSION) -m models/$(LANGUAGE_MODEL_NAME) -c 512 -cnv -i --metrics --host 0.0.0.0 --port 8080
 
 ############################################################################################################
 # Poetry
