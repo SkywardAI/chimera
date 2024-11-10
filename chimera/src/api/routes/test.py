@@ -57,4 +57,4 @@ async def test_chat(
     - **status**: The status of the service
     """
     result = rag_chat_repo.inference( input_msg=msg )
-    return HealthCheckResponse(status=result)
+    return TestChatResponse(status=result)
