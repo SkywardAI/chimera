@@ -13,15 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import fastapi
-
-from src.api.routes.customized import router as customized_router
-from src.api.routes.health import router as health_router
-from src.api.routes.test import router as test_router
-
-router = fastapi.APIRouter()
+from src.models.schemas.base import BaseSchemaModel
+from pydantic import Field
 
 
-router.include_router(router=health_router)
-router.include_router(router=test_router)
-router.include_router(router=customized_router)
+class TestChatResponse(BaseSchemaModel):
+    """
+    The res of the service
+
+    - **res**: The response of the LLM chat 
+    """
+
+    res: str = Field(..., title="res", description="The response of the LLM chat", examples=["ok"])

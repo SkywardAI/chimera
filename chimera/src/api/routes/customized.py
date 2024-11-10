@@ -16,41 +16,22 @@
 import fastapi
 
 from src.api.dependencies.repository import get_rag_repository
-from src.models.schemas.test import TestChatResponse
+from src.models.schemas.health import HealthCheckResponse
 from src.repository.rag.engine import RAGChatModelRepository
 
-router = fastapi.APIRouter(prefix="/test", tags=["test"])
+router = fastapi.APIRouter(prefix="/customized", tags=["customized"])
 
 
-@router.post("/chat", name="test:chat")
+@router.post("", name="customized:post")
 async def test_chat(
     msg: str,
     rag_chat_repo: RAGChatModelRepository = fastapi.Depends(get_rag_repository(repo_type=RAGChatModelRepository)),
-    ) -> TestChatResponse:
+    ) -> HealthCheckResponse:
     """
     Check the health of the service
 
     ```bash
-    curl http://localhost:8000/api/test/chat -> {"status":"ok"}
-    ```
-
-    Return:
-    - **status**: The status of the service
-    """
-    result = rag_chat_repo.inference( input_msg=msg )
-    return TestChatResponse(res=result)
-
-
-@router.post("/cal", name="test:calculator")
-async def test_chat(
-    msg: str,
-    rag_chat_repo: RAGChatModelRepository = fastapi.Depends(get_rag_repository(repo_type=RAGChatModelRepository)),
-    ) -> TestChatResponse:
-    """
-    Check the health of the service
-
-    ```bash
-    curl http://localhost:8000/api/test/chat -> {"status":"ok"}
+    curl http://localhost:8000/api/customized -> {"status":"ok"}
     ```
 
     Return:
