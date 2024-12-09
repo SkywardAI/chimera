@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "Your Software Title"
+version: 1.0.0
+authors:
+  - family-names: "Li"
+    given-names: "Bowen"
+    orcid: "https://orcid.org/0009-0007-6470-5607"
+  - family-names: "Zhang"
+    given-names: "Chuan"
+date-released: 2024-12-09
+url: "https://github.com/SkywardAI/chimera"
