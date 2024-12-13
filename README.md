@@ -14,3 +14,9 @@ Flexible Prompting: Customizable prompt templates to adapt to various API endpoi
 Robust Error Handling: Mechanisms to gracefully handle LLM errors and API failures.
 Efficient Request-Response Cycles: Optimized processing to deliver timely API responses.
 By exploring Chimera, you'll gain insights into building intelligent, LLM-powered applications that can revolutionize your development projects.
+
+## How to build
+
+```
+make up
+```
